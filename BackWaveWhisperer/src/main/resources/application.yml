@@ -1,0 +1,37 @@
+server:
+  port:
+    9192
+
+spring:
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://localhost:3306/wavewhisper
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      format_sql: true
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          description:
+            sql:
+              BasicBinder: TRACE
+
+  servlet:
+    multipart:
+    max-file-size: 5MB
+    max-request-size: 5MB
+    file-size-threshold: 2MB
+
+auth:
+  token:
+    expirationInMils: 3600000
+    jwtSecret: 36763979244226452948404D635166546A576D5A7134743777217A25432A462D
