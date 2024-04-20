@@ -48,6 +48,7 @@ const Registration = () => {
 					<div className="col-sm-10">
 						<input
 							id="firstName"
+							required
 							name="firstName"
 							type="text"
 							className="form-control"
@@ -64,6 +65,7 @@ const Registration = () => {
 					<div className="col-sm-10">
 						<input
 							id="lastName"
+							required
 							name="lastName"
 							type="text"
 							className="form-control"
@@ -80,6 +82,7 @@ const Registration = () => {
 					<div className="col-sm-10">
 						<input
 							id="email"
+							required
 							name="email"
 							type="email"
 							className="form-control"
@@ -98,6 +101,7 @@ const Registration = () => {
 							type="password"
 							className="form-control"
 							id="password"
+							required
 							name="password"
 							value={registration.password}
 							onChange={handleInputChange}

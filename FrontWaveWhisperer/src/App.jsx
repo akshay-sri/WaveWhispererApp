@@ -19,6 +19,7 @@ import Registration from "./components/auth/Registration";
 import Profile from "./components/auth/Profile";
 import { AuthProvider } from "./components/auth/AuthProvider";
 import RequireAuth from "./components/auth/RequireAuth";
+import ExistingUsers from "./components/user/ExistingUsers";
 
 function App(){
   return( 
@@ -45,6 +46,7 @@ function App(){
 		<Route path="/register" element={<Registration />}/>
 		<Route path="/profile" element={<Profile />}/>
 		<Route path="/logout" element={<FindBooking />}/>
+    <Route path="/existing-users" element={<ExistingUsers />}/>
       </Routes>
     </Router>
     <Footer/>
