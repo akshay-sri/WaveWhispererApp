@@ -181,7 +181,7 @@ export async function getUserProfile(userId, token) {
 	}
 }
 
-/* This isthe function to delete a user */
+/* This is the function to delete a user */
 export async function deleteUser(userId) {
 	try {
 		const response = await api.delete(`/users/delete/${userId}`, {
@@ -215,5 +215,17 @@ export async function getBookingsByUserId(userId, token) {
 	} catch (error) {
 		console.error("Error fetching bookings:", error.message)
 		throw new Error("Failed to fetch bookings")
+	}
+}
+
+/* This function gets all users from the database */
+export async function getAllUsers() {
+	try {
+		const result = await api.get("/users/all", {
+			headers: getHeader()
+		})
+		return result.data
+	} catch (error) {
+		throw new Error("Error fetching users")
 	}
 }

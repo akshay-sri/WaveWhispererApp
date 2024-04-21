@@ -2,6 +2,7 @@ package com.hotel.BackWaveWhisperer.controllers;
 
 import com.hotel.BackWaveWhisperer.exceptions.UserNotFoundException;
 import com.hotel.BackWaveWhisperer.models.User;
+import com.hotel.BackWaveWhisperer.response.UserResponse;
 import com.hotel.BackWaveWhisperer.services.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin("http://localhost:5173")
@@ -21,8 +23,14 @@ public class UserController {
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<User>> getUsers() {
-        return new ResponseEntity<>(userService.getUsers(), HttpStatus.FOUND);
+    public ResponseEntity<List<UserResponse>> getUsers() {
+        List<User> users = userService.getUsers();
+        List<UserResponse> userResponses = new ArrayList<>();
+        for (User user : users) {
+            UserResponse userResponse = getUserResponse(user);
+            userResponses.add(userResponse);
+        }
+        return ResponseEntity.ok(userResponses);
     }
 
     @GetMapping("/{email}")
@@ -49,5 +57,14 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting user");
         }
+    }
+
+    private UserResponse getUserResponse(User user) {
+        User theUser = userService.getUser(user.getEmail());
+        UserResponse userResponse = new UserResponse(theUser.getId(),
+                theUser.getFirstName(),
+                theUser.getLastName(),
+                theUser.getEmail());
+        return userResponse;
     }
 }
