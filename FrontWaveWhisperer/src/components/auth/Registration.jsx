@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"
 
 const Registration = () => {
 	const [registration, setRegistration] = useState({
+		photo: null,
 		firstName: "",
 		lastName: "",
 		email: "",
@@ -12,18 +13,27 @@ const Registration = () => {
 
 	const [errorMessage, setErrorMessage] = useState("")
 	const [successMessage, setSuccessMessage] = useState("")
+	const [imagePreview, setImagePreview] = useState("")
 
 	const handleInputChange = (e) => {
 		setRegistration({ ...registration, [e.target.name]: e.target.value })
 	}
 
+	const handleImageChange = (e) => {
+		const selectedImage = e.target.files[0]
+		setRegistration({ ...registration, photo: selectedImage })
+		setImagePreview(URL.createObjectURL(selectedImage))
+	}
+
 	const handleRegistration = async (e) => {
 		e.preventDefault()
 		try {
-			const result = await registerUser(registration)
+			const result = await registerUser(registration.photo, registration.firstName, 
+				registration.lastName, registration.email, registration.password)
 			setSuccessMessage(result)
 			setErrorMessage("")
-			setRegistration({ firstName: "", lastName: "", email: "", password: "" })
+			setRegistration({photo: null, firstName: "", lastName: "", email: "", password: "" })
+			setImagePreview("")
 		} catch (error) {
 			setSuccessMessage("")
 			setErrorMessage(`Registration error : ${error.message}`)
@@ -108,6 +118,26 @@ const Registration = () => {
 						/>
 					</div>
 				</div>
+				<div className="mb-3">
+								<label htmlFor="photo" className="form-label">
+								 Photo
+								</label>
+								<input
+									required
+									name="photo"
+									id="photo"
+									type="file"
+									className="form-control"
+									onChange={handleImageChange}
+								/>
+								{imagePreview && (
+									<img
+										src={imagePreview}
+										alt="Preview user photo"
+										style={{ maxWidth: "400px", maxHeight: "400px" }}
+										className="mb-3"></img>
+								)}
+							</div>
 				<div className="mb-3">
 					<button type="submit" className="btn btn-hotel" style={{ marginRight: "10px" }}>
 						Register
