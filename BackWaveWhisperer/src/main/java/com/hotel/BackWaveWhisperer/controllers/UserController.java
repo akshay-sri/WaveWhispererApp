@@ -1,7 +1,10 @@
 package com.hotel.BackWaveWhisperer.controllers;
 
+import com.hotel.BackWaveWhisperer.exceptions.PhotoRetrievalException;
+import com.hotel.BackWaveWhisperer.exceptions.ResourceNotFoundException;
 import com.hotel.BackWaveWhisperer.exceptions.UserNotFoundException;
 import com.hotel.BackWaveWhisperer.models.User;
+import com.hotel.BackWaveWhisperer.response.RoomResponse;
 import com.hotel.BackWaveWhisperer.response.UserResponse;
 import com.hotel.BackWaveWhisperer.services.IUserService;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin("http://localhost:5173")
 @RestController
@@ -36,14 +42,11 @@ public class UserController {
     @GetMapping("/{email}")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getUserByEmail(@PathVariable("email") String email) {
-        try {
-            User user = userService.getUser(email);
-            return ResponseEntity.ok(user);
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching user");
-        }
+            Optional<User> user = userService.getUser(email);
+            return user.map(theUser -> {
+                UserResponse userResponse = getUserResponse(theUser);
+                return ResponseEntity.ok(Optional.of(userResponse));
+            }).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
     @DeleteMapping("/delete/{userId}")
@@ -59,12 +62,20 @@ public class UserController {
         }
     }
 
-    private UserResponse getUserResponse(User user) {
-        User theUser = userService.getUser(user.getEmail());
+    private UserResponse getUserResponse(User theUser) {
+        byte[] photoBytes = null;
+        Blob photoBlob = theUser.getPhoto();
+        if (photoBlob != null) {
+            try {
+                photoBytes = photoBlob.getBytes(1, (int) photoBlob.length());
+            } catch (SQLException e) {
+                throw new PhotoRetrievalException("Error retrieving photo");
+            }
+        }
         UserResponse userResponse = new UserResponse(theUser.getId(),
                 theUser.getFirstName(),
                 theUser.getLastName(),
-                theUser.getEmail());
+                theUser.getEmail(),photoBytes);
         return userResponse;
     }
 }
