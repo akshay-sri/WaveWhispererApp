@@ -9,6 +9,7 @@ const Profile = () => {
 		email: "",
 		firstName: "",
 		lastName: "",
+		photo: "",
 		roles: [{ id: "", name: "" }]
 	})
 
@@ -90,10 +91,10 @@ const Profile = () => {
 									<div className="col-md-2">
 										<div className="d-flex justify-content-center align-items-center mb-4">
 											<img
-												src="https://themindfulaimanifesto.org/wp-content/uploads/2020/09/male-placeholder-image.jpeg"
+												src={`data:image/png;base64, ${user.photo}`}
 												alt="Profile"
 												className="rounded-circle"
-												style={{ width: "130px", height: "130px", objectFit: "cover" }}
+												style={{ width: "120px", height: "120px", objectFit: "cover" }}
 											/>
 										</div>
 									</div>
@@ -131,19 +132,6 @@ const Profile = () => {
 												</div>
 											</div>
 											<hr />
-
-											<div className="form-group row">
-												<label className="col-md-2 col-form-label fw-bold">Roles:</label>
-												<div className="col-md-10">
-													<ul className="list-unstyled">
-														{user.roles.map((role) => (
-															<li key={role.id} className="card-text">
-																{role.name}
-															</li>
-														))}
-													</ul>
-												</div>
-											</div>
 										</div>
 									</div>
 								</div>

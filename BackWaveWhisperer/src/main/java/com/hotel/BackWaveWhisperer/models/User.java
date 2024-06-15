@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Blob;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -20,7 +21,8 @@ public class User {
     private String lastName;
     private String email;
     private String password;
-
+    @Lob
+    private Blob photo;
     @ManyToMany(fetch = FetchType.EAGER,
             cascade = {CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.DETACH})

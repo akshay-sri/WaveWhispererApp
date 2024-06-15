@@ -141,16 +141,18 @@ export async function getAvailableRooms(checkInDate, checkOutDate, roomType) {
 }
 
 /* This function register a new user */
-export async function registerUser(registration) {
+export async function registerUser(photo, firstName, lastName, email, password) {
+	const formData = new FormData()
+	formData.append("photo",photo)
+	formData.append("firstName",firstName)
+	formData.append("lastName",lastName)
+	formData.append("email",email)
+	formData.append("password",password)
 	try {
-		const response = await api.post("/auth/register-user", registration)
+		const response = await api.post("/auth/register-user", formData)
 		return response.data
 	} catch (error) {
-		if (error.reeponse && error.response.data) {
-			throw new Error(error.response.data)
-		} else {
-			throw new Error(`User registration error : ${error.message}`)
-		}
+			throw new Error(`User registration error : ${error.response.data}`)
 	}
 }
 

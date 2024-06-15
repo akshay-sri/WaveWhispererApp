@@ -17,7 +17,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @CrossOrigin("http://localhost:5173")
@@ -30,15 +33,25 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
 
-    @PostMapping("/register-user")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
-        try {
-            userService.registerUser(user);
-            return ResponseEntity.ok("Registration successful");
-        } catch (AlreadyExistsException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+@PostMapping("/register-user")
+public ResponseEntity<?> registerUser(
+        @RequestParam("photo") MultipartFile photo,
+        @RequestParam("firstName") String firstName,
+        @RequestParam("lastName") String lastName,
+        @RequestParam("email") String email,
+        @RequestParam("password") String password
+) {
+    try {
+        userService.registerUser(photo, firstName, lastName, email, password);
+        return ResponseEntity.ok("Registration successful");
+    } catch (AlreadyExistsException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    } catch (IOException e) {
+        throw new RuntimeException(e);
     }
+}
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest request){
